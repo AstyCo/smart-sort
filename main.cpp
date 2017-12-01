@@ -40,7 +40,7 @@ void print_current_time()
                 << std::endl;
 }
 
-int main(int /*argc*/, char */*argv*/[])
+int sequentialMain(int /*argc*/, char */*argv*/[])
 {
     std::srand(unsigned(std::time(0)));
 
@@ -89,4 +89,20 @@ int main(int /*argc*/, char */*argv*/[])
     }
 
     return 0;
+}
+
+#ifndef __GNUC__
+    int mpiMain(int argc, char *argv[])
+    {
+
+    }
+#endif
+
+int main(int argc, char *argv[])
+{
+#ifdef __GNUC__
+    return sequentialMain(argc, argv);
+#else
+    return mpiMain(argc, argv);
+#endif
 }
