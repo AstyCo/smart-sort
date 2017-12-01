@@ -1,4 +1,4 @@
-QT += core
+QT -= core
 QT -= gui
 
 TARGET = smart-sort
@@ -7,7 +7,9 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    betcher_schedule.cpp \
+    dhsort.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -21,4 +23,5 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    dhsort.h
+    dhsort.h \
+    betcher_schedule.h

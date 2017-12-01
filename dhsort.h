@@ -2,13 +2,19 @@
 #define DHSORT_H
 
 #include <algorithm>
-
+#include <vector>
 #include <cstring>
 
-#define ASSERT(x) Q_ASSERT(x)
+#include <iostream>
+
+#define ASSERT(x) if (!(x)) Asserter(__FILE__, __LINE__);
 
 namespace phpc
 {
+
+void Asserter(const char *file, int line);
+
+extern const size_t maxHeapSort;    // - defines the maximum integer constant N, at which heapsort is faster than merge sort
 
 template <typename T>
 void siftDown(T *array, int root, int size)
@@ -103,16 +109,13 @@ void dsort(std::vector<T> &array)
     dsort(array.data(), array.size());
 }
 
-
-const size_t max_heap_sort = 4;
-
 template <typename T>
 void dhsort(T *array, size_t size)
 {
-    for (size_t i = 0; i < size; i += max_heap_sort)
-        hsort(array + i, MIN(max_heap_sort, size - i));
+    for (size_t i = 0; i < size; i += maxHeapSort)
+        hsort(array + i, MIN(maxHeapSort, size - i));
 
-    dsort(array, size, max_heap_sort);
+    dsort(array, size, maxHeapSort);
 }
 
 template <typename T>

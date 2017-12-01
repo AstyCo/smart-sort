@@ -1,11 +1,11 @@
-#include <QCoreApplication>
+//#include <QCoreApplication>
 #include <iostream>
 #include <vector>
 #include <ctime>
 
 #include "dhsort.h"
 
-//#define VERBAL
+bool verbal = false;
 
 using namespace phpc;
 
@@ -20,16 +20,14 @@ T random(double from, double to)
 template <typename TContainer>
 void print(const char *str, const TContainer &array)
 {
-    Q_UNUSED(str);
-    Q_UNUSED(array);
-#ifdef VERBAL
-    if (str)
-        std::cout << str;
+    if (verbal) {
+        if (str)
+            std::cout << str;
 
-    for (unsigned i = 0; i < array.size(); ++i)
-        std::cout << array[i] << ' ';
-    std::cout << std::endl;
-#endif
+        for (unsigned i = 0; i < array.size(); ++i)
+            std::cout << array[i] << ' ';
+        std::cout << std::endl;
+    }
 }
 
 void print_current_time()
@@ -42,10 +40,8 @@ void print_current_time()
                 << std::endl;
 }
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char */*argv*/[])
 {
-    QCoreApplication a(argc, argv);
-
     std::srand(unsigned(std::time(0)));
 
     int count;
@@ -92,5 +88,5 @@ int main(int argc, char *argv[])
         ASSERT(array == array_cp2);
     }
 
-    return a.exec();
+    return 0;
 }
