@@ -134,7 +134,7 @@ void B0(int first, int step, int count, int tact)
         return;
     }
     int half = count - count / 2;
-    int countOfMergeSteps = ceil(log2(half)) + 1;
+    int countOfMergeSteps = int(ceil(log2(half))) + 1;
 
     B0(first, step, half, tact + countOfMergeSteps);
     B0(first + step * half, step, count - half, tact + countOfMergeSteps);
