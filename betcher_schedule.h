@@ -13,6 +13,10 @@
 #include <math.h>
 #include <string.h>
 
+#include "dhsort.h"
+
+
+extern int maxTact;
 
 template<typename T>
 std::string toString(const T &value)
@@ -53,7 +57,26 @@ struct Comparator
     }
 };
 
-extern std::vector<Comparator> result;
+class BetcherNet
+{
+    std::vector<int> _pairs;
+    const int _rank;
+    int _nTact;
+public:
+    explicit BetcherNet(int rank, int nTact);
+
+    void fill(const std::vector<Comparator> &schedule);
+
+    bool isValidPair(size_t index);
+
+    void append(int tact, int pair);
+    int size() const { return _pairs.size();}
+    int pair(int tact) const { return _pairs[tact];}
+    int maxTact() const { return _nTact;}
+
+};
+
+extern std::vector<Comparator> betcherSchedule;
 
 const char *byte_to_binary_n(int x, int id);
 
@@ -61,9 +84,9 @@ const char *byte_to_binary(int x);
 
 int findMaxTact(const std::vector<Comparator> &v);
 
-std::string toReport(const std::vector<Comparator> &result);
+std::string toReport(const std::vector<Comparator> &betcherSchedule);
 
-std::string toAnswer(int n, const std::vector<Comparator> &result);
+std::string toAnswer(int n, const std::vector<Comparator> &betcherSchedule);
 
 void testResult(int size);
 

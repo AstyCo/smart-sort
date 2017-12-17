@@ -2,7 +2,9 @@
 
 using namespace std;
 
-vector<Comparator> result;
+vector<Comparator> betcherSchedule;
+
+int maxTact = 0;
 
 const char *byte_to_binary_n(int x, int id)
 {
@@ -64,35 +66,35 @@ string toAnswer(int n, const vector<Comparator> &result)
 
 void testResult(int size)
 {
-    int maxTactP1 = findMaxTact(result) + 1;
+    int maxTactP1 = findMaxTact(betcherSchedule) + 1;
     set<int> nodes;
     for (int i = 1; i < maxTactP1; ++i) {
         bool tactFound = false;
         nodes.clear();
-        for (unsigned j = 0; j < result.size(); ++j) {
-            if (result[j].tact != i) {
+        for (unsigned j = 0; j < betcherSchedule.size(); ++j) {
+            if (betcherSchedule[j].tact != i) {
                 if (tactFound)
                     break;
                 else
                     continue;
             }
             tactFound = true;
-            if (nodes.find(result[j].a) != nodes.end()
-                    || nodes.find(result[j].b) != nodes.end()) {
+            if (nodes.find(betcherSchedule[j].a) != nodes.end()
+                    || nodes.find(betcherSchedule[j].b) != nodes.end()) {
                 cout << "ERROR: network of size " << toString(size) << endl;
                 exit(1);
             }
-            nodes.insert(result[j].a);
-            nodes.insert(result[j].b);
+            nodes.insert(betcherSchedule[j].a);
+            nodes.insert(betcherSchedule[j].b);
         }
     }
 }
 
 void reverseResultTacts()
 {
-    int maxTactP1 = findMaxTact(result) + 1;
-    for (unsigned i = 0; i < result.size(); ++i)
-        result[i].tact = maxTactP1 - result[i].tact;
+    int maxTactP1 = findMaxTact(betcherSchedule) + 1;
+    for (unsigned i = 0; i < betcherSchedule.size(); ++i)
+        betcherSchedule[i].tact = maxTactP1 - betcherSchedule[i].tact;
 }
 
 void S(int a, int b, int d, int n, int m, int tact)
@@ -143,7 +145,7 @@ void B0(int first, int step, int count, int tact)
 
 void B(int first, int step, int count)
 {
-    result.clear();
+    betcherSchedule.clear();
     B0(first, step, count, 1);
     //    reverseResultTacts();
     newSetTacts();
@@ -171,8 +173,8 @@ void swap_1_0(int a, int b, int &array, int array_size)
 
 int sorted(int array, int size)
 {
-    for (unsigned i = 0; i < result.size(); ++i)
-        swap_1_0(result[i].a, result[i].b, array, size);
+    for (unsigned i = 0; i < betcherSchedule.size(); ++i)
+        swap_1_0(betcherSchedule[i].a, betcherSchedule[i].b, array, size);
     return array;
 }
 
@@ -189,8 +191,8 @@ void myAssert(int permutation, int answer, int size)
 
 void clearTacts()
 {
-    for (unsigned i = 0; i < result.size(); ++i)
-        result[i].tact = -1;
+    for (unsigned i = 0; i < betcherSchedule.size(); ++i)
+        betcherSchedule[i].tact = -1;
 }
 
 void newSetTacts()
@@ -199,13 +201,13 @@ void newSetTacts()
     int currentTact = 1;
 
     clearTacts();
-    for (unsigned i = 0; i < result.size(); ++i) {
-        Comparator &comp1 = result[i];
+    for (unsigned i = 0; i < betcherSchedule.size(); ++i) {
+        Comparator &comp1 = betcherSchedule[i];
         if (comp1.tact != -1)
             continue;
 
-        for (unsigned j = i; j < result.size(); ++j) {
-            Comparator &comp = result[j];
+        for (unsigned j = i; j < betcherSchedule.size(); ++j) {
+            Comparator &comp = betcherSchedule[j];
             if (comp.tact != -1)
                 continue;
 
@@ -223,7 +225,7 @@ void newSetTacts()
 bool test(int n)
 {
     B(0, 1, n);
-    sort(result.begin(), result.end());
+    sort(betcherSchedule.begin(), betcherSchedule.end());
     testResult(n);
     int lastPermutation = 1 << n;
     for (int permutation = 0; permutation < lastPermutation; ++permutation) {
@@ -237,10 +239,41 @@ void makeMyReportToFile(ofstream &file, int n)
 {
     B(0, 1, n);
     //    sort(result.begin(), result.end());
-    file << toReport(result) << endl;
+    file << toReport(betcherSchedule) << endl;
 }
 
 void addComparator(int a, int b, int tact)
 {
-    result.push_back(Comparator(a, b, tact));
+    betcherSchedule.push_back(Comparator(a, b, tact));
+    if (tact > maxTact)
+        maxTact = tact;
+}
+
+bool BetcherNet::isValidPair(size_t index)
+{
+    ASSERT(index < _pairs.size());
+    return _pairs[index] != -1;
+}
+
+BetcherNet::BetcherNet(int rank, int nTact)
+    : _rank(rank), _nTact(nTact)
+{
+    _pairs.resize(nTact, -1);
+}
+
+void BetcherNet::fill(const std::vector<Comparator> &schedule)
+{
+    for (size_t i = 0; i < schedule.size(); ++i) {
+        const Comparator &comp = schedule[i];
+        if (comp.a == _rank)
+            append(comp.tact, comp.b);
+        else if (comp.b  == _rank)
+            append(comp.tact, comp.a);
+    }
+}
+
+void BetcherNet::append(int tact, int pair)
+{
+    ASSERT(!isValidPair(tact));
+    _pairs[tact] = pair;
 }

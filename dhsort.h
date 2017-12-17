@@ -9,12 +9,13 @@
 
 #define ASSERT(x) if (!(x)) Asserter(__FILE__, __LINE__);
 
-namespace phpc
-{
+struct Point;
 
 void Asserter(const char *file, int line);
 
 extern const size_t maxHeapSort;    // - defines the maximum integer constant N, at which heapsort is faster than merge sort
+
+void siftDownPoints(Point *array, int root, int size, int coordinate);
 
 template <typename T>
 void siftDown(T *array, int root, int size)
@@ -54,14 +55,16 @@ void hsort(T *array, std::size_t size)
     }
 }
 
+void hsortPoints(Point *array, std::size_t size, int coordinate);
+
 template <typename T>
 void hsort(std::vector<T> &array)
 {
     hsort(array.data(), array.size());
 }
 
-#define MIN(a,b) ((a)<(b)? (a) :(b))
-#define MAX(a,b) ((a)<(b)? (b) :(a))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)<(b)?(b):(a))
 
 template <typename T>
 void dsort(T *array, size_t size, size_t sortedBlockSize = 1)
@@ -102,6 +105,8 @@ void dsort(T *array, size_t size, size_t sortedBlockSize = 1)
     }
 }
 
+void dsortPoints(Point *array, size_t size, int coordinate, size_t sortedBlockSize = 1);
+
 template <typename T>
 void dsort(std::vector<T> &array)
 {
@@ -118,13 +123,13 @@ void dhsort(T *array, size_t size)
     dsort(array, size, maxHeapSort);
 }
 
+void dhsortPoints(Point *array, size_t size, int coordinate);
+
 template <typename T>
 void dhsort(std::vector<T> &array)
 {
     ASSERT(array.size() > 0);
     dhsort(array.data(), array.size());
 }
-
-} // namespace phpc
 
 #endif // DHSORT_H
